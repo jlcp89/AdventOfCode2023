@@ -11,7 +11,7 @@ def convert_number(number, conversion_map):
 def find_lowest_location(initial_seeds, conversion_maps):
     current_numbers = initial_seeds
     for conversion_map in conversion_maps:
-        current_numbers = (convert_number(seed_number, conversion_map) for seed_number in current_numbers)
+        current_numbers = [convert_number(seed_number, conversion_map) for seed_number in current_numbers]
     return min(current_numbers)
 
 def pairs_from_list(numbers):
@@ -19,13 +19,12 @@ def pairs_from_list(numbers):
 
 def numbers_from_pairs(pairs, block_size=1000):
     result = []
-    for converted_range in pairs:
-        if len(result) + len(converted_range) > block_size:
+    for start, length in pairs:
+        if len(result) + length > block_size:
             yield result
             result = []
-        result.extend(converted_range)
-    if result:
-        yield result
+        result.extend(range(start, start + length))
+    yield result
 
 def read_seed_file(file_path):
     seed_data = {
@@ -70,6 +69,5 @@ conversion_maps.extend([
 seeds = chain.from_iterable(numbers_from_pairs(pairs_from_list(seed_data.get("seeds", []))))
 
 lowest_location = find_lowest_location(seeds, conversion_maps)
-
 
 print(f"Lowest Location: {lowest_location}")
