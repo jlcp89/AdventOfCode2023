@@ -1,24 +1,33 @@
+conversion_maps = []
+
 def convert_number(number, conversion_map):
     for dest_start, source_start, length in conversion_map:
         if source_start <= number < source_start + length:
             return dest_start + (number - source_start)
     return number  # If no mapping found, return the original number
 
-conversion_maps = []
-
 def find_lowest_location(initial_seeds, conversion_maps):
     current_numbers = initial_seeds
-
     for conversion_map in conversion_maps:
         new_numbers = []
-
         for seed_number in current_numbers:
             new_number = convert_number(seed_number, conversion_map)
             new_numbers.append(new_number)
-
         current_numbers = new_numbers
-
     return min(current_numbers)
+
+def pairs_from_list(numbers):
+    return [(numbers[i], numbers[i + 1]) for i in range(0, len(numbers), 2)]
+
+def numbers_from_pairs(pairs, block_size=1000):
+    result = []
+    for start, length in pairs:
+        if len(result) + length > block_size:
+            yield result
+            result = []
+        result.extend(range(start, start + length))
+    yield result
+
 
 def read_seed_file(file_path):
     seed_data = {
@@ -58,18 +67,11 @@ conversion_maps.append(seed_data.get("light_to_temperature_map", []))
 conversion_maps.append(seed_data.get("temperature_to_humidity_map", []))
 conversion_maps.append(seed_data.get("humidity_to_location_map", []))
 
-lowest_location = find_lowest_location(seed_data.get("seeds", []), conversion_maps)
+seeds =[]
+for partial_result in numbers_from_pairs(pairs_from_list(seed_data.get("seeds", []))):
+    seeds.extend(partial_result)
+
+lowest_location = find_lowest_location(seeds, conversion_maps)
 
 print(f"Lowest Location: {lowest_location}")
 
-# Access the parsed data
-"""
-print("Seeds:", seed_data.get("seeds", []))
-print("Seed to Soil Map:", seed_data.get("seed_to_soil_map", []))
-print("Soil to Fertilizer Map:", seed_data.get("soil_to_fertilizer_map", []))
-print("Fertilizer to Water Map:", seed_data.get("fertilizer_to_water_map", []))
-print("Water to Light Map:", seed_data.get("water_to_light_map", []))
-print("Light to Temperature Map:", seed_data.get("light_to_temperature_map", []))
-print("Temperature to Humidity Map:", seed_data.get("temperature_to_humidity_map", []))
-print("Humidity to Location Map:", seed_data.get("humidity_to_location_map", []))
-"""
