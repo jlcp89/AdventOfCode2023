@@ -6,25 +6,17 @@ def convert_to_tuples(time_values, distance_values):
 
 def calculate_ways_to_win(time_distance_tuples):
     total_ways_to_win = 1
-
     for time, distance in time_distance_tuples:
         ways_to_win = 0
-
         aceleracion = 1 # m/s
-        
         for i in range(0,time):
             velocidad = i * aceleracion
             distancia = velocidad * (time - i)
             if distancia > distance:
                 ways_to_win += 1
-            
-
         total_ways_to_win *= ways_to_win
         print(f'Carrera: {time},{distance}  Maneras: {ways_to_win}')
-
     return total_ways_to_win
-
-# Rest of the code remains unchanged
 
 
 def read_values_from_file(file_path):
