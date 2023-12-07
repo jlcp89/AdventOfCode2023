@@ -33,7 +33,7 @@ def read_values_from_file(file_path):
     return convert_to_tuples(time_values, distance_values)
 
 # Ejemplo de uso con el archivo botes1.txt
-file_path = 'botes2.txt'
+file_path = 'botes3.txt'
 tuples_result = read_values_from_file(file_path)
 result = calculate_ways_to_win(tuples_result)
 
