@@ -15,12 +15,12 @@ def chunked(iterable, size):
 
 def find_lowest_location(initial_seeds, conversion_maps):
     current_numbers = initial_seeds
-    block_size = 1000  # Set the block size to a reasonable value
+    block_size = 100  # Set the block size to a reasonable value
 
     for conversion_map in conversion_maps:
         new_numbers = []
         for block in chunked(current_numbers, block_size):
-            converted_block = [convert_number(seed_number, conversion_map) for seed_number in block]
+            converted_block = (convert_number(seed_number, conversion_map) for seed_number in block)
             new_numbers.extend(converted_block)
         current_numbers = new_numbers
 
@@ -66,7 +66,7 @@ def read_seed_file(file_path):
     return seed_data
 
 # Example usage:
-file_path = 'seeds2.txt'
+file_path = 'seeds.txt'
 seed_data = read_seed_file(file_path)
 conversion_maps.extend([
     seed_data.get("seed_to_soil_map", []),
