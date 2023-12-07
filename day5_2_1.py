@@ -66,7 +66,7 @@ def read_seed_file(file_path):
     return seed_data
 
 # Example usage:
-file_path = 'seeds.txt'
+file_path = 'seeds2.txt'
 seed_data = read_seed_file(file_path)
 conversion_maps.extend([
     seed_data.get("seed_to_soil_map", []),
