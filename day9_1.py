@@ -14,8 +14,6 @@ for linea in lineas:
         for i in range (0, len(nuevas_lineas[-1])-1):
             nueva_linea_t.append(nuevas_lineas[-1][i+1]-nuevas_lineas[-1][i] )
             
-            
-
         nuevas_lineas.append(nueva_linea_t)
 
         if all (numero == 0 for numero  in nuevas_lineas[-1]):

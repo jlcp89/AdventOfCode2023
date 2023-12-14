@@ -1,28 +1,12 @@
-#!/usr/bin/env python3
-# 2023 Day 10: Pipe Maze
-
-# Importación comentada y no utilizada
-# from ast import literal_eval
-
 def process_input(filename):
-    """Adquiere los datos de entrada"""
     with open(filename) as file:
-        # Lee el contenido del archivo, divide las líneas y lo almacena en la variable 'input'
-        input = file.read().splitlines()
+        lines = file.read().splitlines()
 
-    maze = {}  # Inicializa un diccionario para representar el laberinto
-    x_len = len(input[0])  # Calcula la longitud del laberinto en la dirección x
-    y_len = len(input)  # Calcula la longitud del laberinto en la dirección y
+    maze = {(x, y): ch for y, line in enumerate(lines) for x, ch in enumerate(line)}
+    x_len, y_len = len(lines[0]), len(lines)
+    start = next((pos for pos, ch in maze.items() if ch == 'S'), None)
 
-    for y, line in enumerate(input):
-        for x, ch in enumerate(line):
-            # Llena el diccionario 'maze' con las posiciones y caracteres del laberinto
-            maze[(x, y)] = ch
-            # Encuentra la posición inicial (x, y) cuando el carácter es 'S'
-            if ch == 'S':
-                start = (x, y)
-
-    return maze, x_len, y_len, start  # Devuelve el laberinto, longitudes y posición inicial como una tupla
+    return maze, x_len, y_len, start
 
 
 def find_loop():
@@ -64,41 +48,15 @@ def next_tile(current, move_dir):
 
 
 def determine_start_tile():
-    directions = ''  # Inicializa una cadena para almacenar las direcciones permitidas
-    for move in ('N', 'E', 'W', 'S'):
-        from_dir = reverse_dir[move]  # Obtiene la dirección opuesta a la dirección de movimiento actual
-        next_ch, next_pos = tile_at(start, move)  # Calcula la casilla y posición después del movimiento
-        if from_dir in moves[next_ch]:
-            directions += move  # Agrega la dirección actual si es válida
-
-    # Determina el tipo de casilla en la posición inicial según las direcciones permitidas
-    if directions in ('NS', 'SN'):
-        start_tile = '|'
-    elif directions in ('EW', 'WE'):
-        start_tile = '-'
-    elif directions in ('NE', 'EN'):
-        start_tile = 'L'
-    elif directions in ('NW', 'NW'):
-        start_tile = 'J'
-    elif directions in ('SW', 'WS'):
-        start_tile = '7'
-    elif directions in ('SE', 'ES'):
-        start_tile = 'F'
-
-    return start_tile  # Devuelve el tipo de casilla en la posición inicial
+    directions = ''.join(move for move in ('N', 'E', 'W', 'S') if reverse_dir[move] in moves[tile_at(start, move)[0]])
+    return {'NS': '|', 'EW': '-', 'NE': 'L', 'NW': 'J', 'SW': '7', 'SE': 'F'}.get(directions, '')
 
 
 def tile_at(pos, move):
-    x, y = pos  # Desempaqueta la posición en coordenadas x e y
-    a, b = tile_adjust[move]  # Obtiene los ajustes correspondientes a la dirección de movimiento
-    new_pos = (x + a, y + b)  # Calcula la nueva posición después del movimiento
-
-    if new_pos in maze:
-        ch = maze[new_pos]  # Obtiene el carácter en la nueva posición si está en el laberinto
-    else:
-        ch = '.'  # Utiliza un punto si la nueva posición está fuera del laberinto
-
-    return ch, new_pos  # Devuelve el carácter y la nueva posición
+    x, y = pos
+    a, b = tile_adjust[move]
+    new_pos = (x + a, y + b)
+    return (maze[new_pos], new_pos) if new_pos in maze else ('.', new_pos)
 
 
 def count_enclosed():
@@ -141,8 +99,6 @@ def loop_tiles_to_edge(x, y):
 
     return int(loop_tiles)  # Devuelve el número de casillas hasta el borde como un entero
 
-
-#-----------------------------------------------------------------------------------------
 
 # Especifica el nombre del archivo de entrada
 filename = 'd10_real.txt'
